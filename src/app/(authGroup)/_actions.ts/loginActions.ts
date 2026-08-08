@@ -1,17 +1,22 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 type loginState = {
-   success:string,
-   statusCode:number,
-   message:string,
-   data:{
-      accessToken:string,
-      refreshToken:string
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+};
 
-   }
-}
-
-export const loginAction = async (prevState:loginState,formData: FormData) => {
+export const loginAction = async (
+  prevState: loginState,
+  formData: FormData,
+) => {
   console.log(formData);
   const email = formData.get("email");
   const password = formData.get("password");
@@ -27,10 +32,22 @@ export const loginAction = async (prevState:loginState,formData: FormData) => {
     body: JSON.stringify(payload),
   });
 
-  const result =await res.json();
-  console.log(result);
+  const result: loginState = await res.json();
+  const cookieStore = await cookies();
+  cookieStore.set("accessToken", result.data.accessToken, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24,
+    sameSite: "lax",
+  });
 
-  return result
-  
+  cookieStore.set("refreshToken", result.data.refreshToken, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24,
+    sameSite: "lax",
+  });
 
+  redirect("/")
+
+  return result;
 };
+

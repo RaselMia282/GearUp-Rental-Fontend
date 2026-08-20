@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 type RegisterState = {
   sucess:true,
   statusCode:number,
@@ -33,6 +35,8 @@ export const registerActions = async (prevState:RegisterState,formData: FormData
 
   const result = await res.json();
   console.log(result);
+
+  redirect("/login")
   
 return result
 }

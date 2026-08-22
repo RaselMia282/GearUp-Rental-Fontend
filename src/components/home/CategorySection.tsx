@@ -4,7 +4,7 @@ import { getCategories } from "@/service/category";
 
 const CategorySection = async () => {
   const categoriesData = await getCategories();
-  console.log(categoriesData);
+  // console.log(categoriesData);
   
 
   // API Response Handle 

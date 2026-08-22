@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/shared/navbar";
 import { getMe } from "@/service/getMe";
+import { Footer } from "@/components/shared/footer";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">
           {children}
           </main>
+          <Footer></Footer>
       </body>
     </html>
   );

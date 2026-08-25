@@ -43,7 +43,7 @@ export function Navbar({ user }: NavbarProps) {
   const handleLogOut = async () => {
     await logOut();
     router.refresh();
-    router.push('/login')
+    router.push("/login");
   };
 
   const getFormattedName = () => {
@@ -155,16 +155,16 @@ export function Navbar({ user }: NavbarProps) {
 
                   <DropdownMenuGroup>
                     <DropdownMenuItem
-                      onClick={() => router.push("/profile")}
+                      onClick={() => router.push("/dashboard")}
                       className="cursor-pointer rounded-lg py-2"
                     >
                       <User className="mr-2.5 h-4 w-4 text-muted-foreground" />
-                      <span>Profile</span>
+                      <span className="font-bold">Dashboard</span>
                     </DropdownMenuItem>
 
                     {user.role === "ADMIN" && (
                       <DropdownMenuItem
-                        onClick={() => router.push("/admin")}
+                        onClick={() => router.push("/dashboard")}
                         className="cursor-pointer rounded-lg py-2"
                       >
                         <ShieldCheck className="mr-2.5 h-4 w-4 text-orange-500" />
@@ -172,19 +172,33 @@ export function Navbar({ user }: NavbarProps) {
                       </DropdownMenuItem>
                     )}
 
+
+                    {/* provider dashboard */}
+
+                    {user.role === "PROVIDER" && (
+                      <DropdownMenuItem
+                        onClick={() => router.push("/dashboard")}
+                        className="cursor-pointer rounded-lg py-2"
+                      >
+                        <ShieldCheck className="mr-2.5 h-4 w-4 text-orange-500" />
+                        <span>Admin Dashboard</span>
+                      </DropdownMenuItem>
+                    )}
+
+
                     <DropdownMenuItem
-                      onClick={() => router.push("/settings")}
+                      onClick={() => router.push("/dashboard")}
                       className="cursor-pointer rounded-lg py-2"
-                    >
-                      <Settings className="mr-2.5 h-4 w-4 text-muted-foreground" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
+                    ></DropdownMenuItem>
                   </DropdownMenuGroup>
 
                   <DropdownMenuSeparator />
 
-                  <DropdownMenuItem onClick={handleLogOut} className="cursor-pointer rounded-lg py-2 text-red-600 focus:bg-red-50 focus:text-red-600">
-                    <LogOut  className="mr-2.5 h-4 w-4" />
+                  <DropdownMenuItem
+                    onClick={handleLogOut}
+                    className="cursor-pointer rounded-lg py-2 text-red-600 focus:bg-red-50 focus:text-red-600"
+                  >
+                    <LogOut className="mr-2.5 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

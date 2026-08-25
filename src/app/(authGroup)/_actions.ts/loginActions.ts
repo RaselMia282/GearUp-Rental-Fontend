@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import jwt from "jsonwebtoken";
 
 type loginState = {
   success: boolean;
@@ -33,6 +34,20 @@ export const loginAction = async (
   });
 
   const result: loginState = await res.json();
+  // console.log("LOGIN RESULT:", result);
+  // console.log("ACCESS TOKEN:", result.data?.accessToken);
+
+  if (!result.success) {
+    return result;
+  }
+
+  const decoded = jwt.decode(result.data.accessToken) as {
+    id: string;
+    email: string;
+    role: string;
+  };
+
+  // console.log("DECODED TOKEN:", decoded);
   const cookieStore = await cookies();
   cookieStore.set("accessToken", result.data.accessToken, {
     httpOnly: true,
@@ -46,8 +61,15 @@ export const loginAction = async (
     sameSite: "lax",
   });
 
-  redirect("/")
+  cookieStore.set("role", decoded.role, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24,
+    sameSite: "lax",
+  });
+
+  // console.log("ROLE COOKIE SET:", decoded.role);
+
+  redirect("/dashboard");
 
   return result;
 };
-

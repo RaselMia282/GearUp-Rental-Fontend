@@ -15,10 +15,10 @@ export default function PaymentPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // পেমেন্ট প্রসেসিং ডামি লজিক (পরবর্তীতে Stripe integration হবে)
+    
     setTimeout(() => {
       setIsLoading(false);
-      router.push("/success");
+      router.push("/payment/sucess");
     }, 1500);
   };
 

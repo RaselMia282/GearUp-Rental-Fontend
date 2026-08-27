@@ -51,7 +51,7 @@ export default function DashboardLayout({
     );
   }
 
-  // রোল চেককে নিরাপদ করতে কেস নরমাল করা হলো
+  
   const normalizedRole = role?.toUpperCase();
 
   return (

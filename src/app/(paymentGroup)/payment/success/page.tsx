@@ -28,7 +28,7 @@ export default function PaymentSuccessPage() {
         {/* Action Buttons */}
         <div className="pt-4 space-y-3">
           <Link
-            href="/my-rentals"
+            href="/dashboard/my-rentals"
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
           >
             <Calendar className="w-5 h-5" />

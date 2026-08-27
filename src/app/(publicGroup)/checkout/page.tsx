@@ -5,21 +5,24 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Trash2, Lock, Award, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { myRentals } from "@/service/myRental";
 
 export default function CheckoutPage() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // URL query params থেকে সিলেক্ট করা গিয়ারের ডাটা নেওয়া হচ্ছে
   const gearId = searchParams.get("gearId");
   const gearTitle = searchParams.get("title") || "Selected Gear";
   const gearPrice = Number(searchParams.get("price")) || 45;
-  const gearImage = searchParams.get("image") || "https://i.ibb.co.com/G4FQRD83/unnamed-1.jpg";
+  const gearImage =
+    searchParams.get("image") || "https://i.ibb.co.com/G4FQRD83/unnamed-1.jpg";
 
-  const [selectedProtection, setSelectedProtection] = useState<"none" | "basic" | "full">("full");
+  const [selectedProtection, setSelectedProtection] = useState<
+    "none" | "basic" | "full"
+  >("full");
 
-  // রেন্টাল হিসাব
-  const rentalDays = 2; // পিকআপ ও রিটার্ন ডেট থেকে হিসাব ডাইনামিক করা যাবে
+  const rentalDays = 2;
   const itemPrice = gearPrice * rentalDays;
   const protectionPrices = { none: 0, basic: 15.0, full: 45.0 };
   const cleaningFee = 12.0;
@@ -30,10 +33,35 @@ export default function CheckoutPage() {
   const tax = subtotal * taxRate;
   const total = subtotal + tax;
 
+  // dynamic id here
+
   const handleConfirmRental = async () => {
-    // এখানে পরবর্তীতে ব্যাকএন্ড API রিকোয়েস্ট পাঠাবে এবং orderId পাবে
-    const mockOrderId = "ORD-98231";
-    router.push(`/payment/${mockOrderId}`);
+    setLoading(true);
+
+    try {
+      const payload = {
+        startDate: "2026-08-01",
+        endDate: "2026-08-05",
+        gearItemId: gearId,
+        quantity: 1,
+      };
+
+      console.log("RENTAL PAYLOAD:", payload);
+
+      const result = await myRentals(payload);
+
+      console.log("🔥 FRONTEND RESULT:", result);
+
+      if (!result.success || !result.data?.id) {
+        throw new Error(result.message || "Rental order creation failed");
+      }
+
+      router.push(`/payment/${result.data.id}`);
+    } catch (error) {
+      console.error("RENTAL ERROR:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,16 +73,20 @@ export default function CheckoutPage() {
         <ArrowLeft className="w-4 h-4" /> Back to Gear Details
       </Link>
 
-      <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-gray-900">Review & Confirm Rental</h1>
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-gray-900">
+        Review & Confirm Rental
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column */}
         <div className="lg:col-span-7 space-y-6">
           {/* Equipment Selection */}
           <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
-            <h2 className="text-lg font-bold mb-4 text-gray-900">Equipment Selection</h2>
+            <h2 className="text-lg font-bold mb-4 text-gray-900">
+              Equipment Selection
+            </h2>
             <div className="flex flex-col sm:flex-row gap-4 items-start bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-gray-200">
+              <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-200">
                 <Image
                   src={gearImage}
                   alt={gearTitle}
@@ -64,7 +96,9 @@ export default function CheckoutPage() {
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-gray-900 text-base">{gearTitle}</h3>
+                  <h3 className="font-bold text-gray-900 text-base">
+                    {gearTitle}
+                  </h3>
                   <button className="text-gray-400 hover:text-red-500 transition">
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -73,7 +107,9 @@ export default function CheckoutPage() {
                   <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full">
                     Aug 24 — Aug 26 ({rentalDays} Days)
                   </span>
-                  <span className="text-xs font-extrabold text-gray-700">${gearPrice} / day</span>
+                  <span className="text-xs font-extrabold text-gray-700">
+                    ${gearPrice} / day
+                  </span>
                 </div>
               </div>
             </div>
@@ -101,7 +137,9 @@ export default function CheckoutPage() {
                   Recommended
                 </span>
                 <div className="flex justify-between items-start mt-1">
-                  <h4 className="font-bold text-gray-900 text-sm">Summit Safety</h4>
+                  <h4 className="font-bold text-gray-900 text-sm">
+                    Summit Safety
+                  </h4>
                   <input
                     type="radio"
                     checked={selectedProtection === "full"}
@@ -110,7 +148,8 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-2 font-medium">
-                  Complete coverage for theft, accidental damage, and deep scratches.
+                  Complete coverage for theft, accidental damage, and deep
+                  scratches.
                 </p>
                 <p className="text-sm font-black text-gray-900 mt-4">$45.00</p>
               </div>
@@ -124,7 +163,9 @@ export default function CheckoutPage() {
                 }`}
               >
                 <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-gray-900 text-sm">Trail Minor</h4>
+                  <h4 className="font-bold text-gray-900 text-sm">
+                    Trail Minor
+                  </h4>
                   <input
                     type="radio"
                     checked={selectedProtection === "basic"}
@@ -144,37 +185,53 @@ export default function CheckoutPage() {
         {/* Right Column */}
         <div className="lg:col-span-5">
           <div className="bg-white border border-gray-200 rounded-3xl p-6 sticky top-6 shadow-sm">
-            <h2 className="text-lg font-extrabold text-gray-900 mb-6">Rental Breakdown</h2>
+            <h2 className="text-lg font-extrabold text-gray-900 mb-6">
+              Rental Breakdown
+            </h2>
 
             <div className="space-y-3 text-sm text-gray-600 border-b border-gray-100 pb-4 font-medium">
               <div className="flex justify-between">
-                <span>{gearTitle} ({rentalDays} days)</span>
-                <span className="font-bold text-gray-900">${itemPrice.toFixed(2)}</span>
+                <span>
+                  {gearTitle} ({rentalDays} days)
+                </span>
+                <span className="font-bold text-gray-900">
+                  ${itemPrice.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Gear Protection</span>
-                <span className="font-bold text-gray-900">${currentProtectionPrice.toFixed(2)}</span>
+                <span className="font-bold text-gray-900">
+                  ${currentProtectionPrice.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Cleaning Fee</span>
-                <span className="font-bold text-gray-900">${cleaningFee.toFixed(2)}</span>
+                <span className="font-bold text-gray-900">
+                  ${cleaningFee.toFixed(2)}
+                </span>
               </div>
             </div>
 
             <div className="space-y-3 text-sm text-gray-600 border-b border-gray-100 py-4 font-medium">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+                <span className="font-bold text-gray-900">
+                  ${subtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Estimated Tax (8%)</span>
-                <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+                <span className="font-bold text-gray-900">
+                  ${tax.toFixed(2)}
+                </span>
               </div>
             </div>
 
             <div className="flex justify-between items-center py-5">
               <span className="text-base font-bold text-gray-900">Total</span>
-              <span className="text-2xl font-black text-[#ff4e00]">${total.toFixed(2)}</span>
+              <span className="text-2xl font-black text-[#ff4e00]">
+                ${total.toFixed(2)}
+              </span>
             </div>
 
             <button
@@ -182,7 +239,9 @@ export default function CheckoutPage() {
               className="w-full bg-[#ff4e00] hover:bg-[#e04500] text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 flex items-center justify-center gap-2 group"
             >
               <span>Confirm Rental</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
+              <span className="group-hover:translate-x-1 transition-transform">
+                →
+              </span>
             </button>
 
             <p className="text-center text-xs text-gray-400 font-medium">

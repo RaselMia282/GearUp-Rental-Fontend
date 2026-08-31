@@ -11,7 +11,7 @@ import { Footer } from "@/components/shared/footer";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Assignment-5",
+  title: "GearUp",
   description: "Gear rental web application",
 };
 

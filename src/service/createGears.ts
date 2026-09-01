@@ -1,3 +1,5 @@
+"use server"
+
 import { cookies } from "next/headers";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

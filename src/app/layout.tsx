@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Gear rental web application",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   const user = await getMe();

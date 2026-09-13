@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import {
   ArrowLeft,
   Star,
@@ -33,6 +35,20 @@ export default async function GearDetailPage({
 }: {
   params: { id: string };
 }) {
+  
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  let userRole: string | null = null;
+
+  if (token) {
+    try {
+      const decoded = jwt.decode(token) as JwtPayload;
+      userRole = decoded?.role || null;
+    } catch {
+      userRole = null;
+    }
+  }
+
   const allGears: GearItem[] = await getGears();
 
   const gear =
@@ -235,21 +251,39 @@ export default async function GearDetailPage({
               </span>
             </div>
 
-            <Link
-              href={{
-                pathname: "/checkout",
-                query: {
-                  gearId: gear?.id,
-                  title: gear?.title,
-                  price: gear?.price,
-                  image: currentImage,
-                  category: gear?.category || "Outdoor",
-                },
-              }}
-              className="w-full bg-[#ff4e00] hover:bg-[#e04500] text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 text-center block"
-            >
-              Rent Now
-            </Link>
+            {/* Role-Based Action Buttons */}
+            {userRole === "ADMIN" ? (
+              <Link
+                href="/dashboard/all-gears"
+                className="w-full bg-orange-700 hover:bg-orange-800 text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 text-center block text-sm"
+              >
+                Manage Listings in Dashboard
+              </Link>
+            ) : userRole === "PROVIDER" ? (
+              <Link
+                href="/dashboard/my-gears"
+                className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 text-center block text-sm"
+              >
+                Go to Dashboard to Manage Gears
+              </Link>
+            ) : (
+              <Link
+                href={{
+                  pathname: "/checkout",
+                  query: {
+                    gearId: gear?.id,
+                    title: gear?.title,
+                    price: gear?.price,
+                    image: currentImage,
+                    category: gear?.category || "Outdoor",
+                  },
+                }}
+                className="w-full bg-[#ff4e00] hover:bg-[#e04500] text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 text-center block"
+              >
+                Rent Now
+              </Link>
+            )}
+
             <p className="text-center text-xs text-gray-400 font-medium">
               You won&apos;t be charged yet
             </p>

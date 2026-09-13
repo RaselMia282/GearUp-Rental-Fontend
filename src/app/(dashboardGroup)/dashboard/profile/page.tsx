@@ -66,7 +66,17 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) return <p className="p-6">Loading profile...</p>;
+  // if (loading) return <p className="p-6">Loading profile...</p>;
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-3">
+        {/* Tailwind Spinner */}
+        <div className="w-10 h-10 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
+        <p className="text-gray-600 font-medium text-sm">Loading profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md space-y-4">

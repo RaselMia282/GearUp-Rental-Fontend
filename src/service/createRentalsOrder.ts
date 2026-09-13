@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-export async function myRentals(payload?: any) {
+export async function createRentalsOrder(payload?: any) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("accessToken")?.value;

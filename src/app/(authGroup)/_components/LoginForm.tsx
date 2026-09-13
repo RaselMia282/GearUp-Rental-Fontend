@@ -8,7 +8,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 export default function LoginFrom() {
-  const[state,action,pending]=useActionState(loginAction,false)
+  const[state,action,pending]=useActionState(loginAction,null)
   useEffect(()=>{
     if(!state) return
     if(state.success){
@@ -33,7 +33,7 @@ export default function LoginFrom() {
             className="object-cover"
           /> */}
           {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-black/40" />
 
           {/* Top Logo */}
           <div className="relative z-10 flex items-center gap-2">

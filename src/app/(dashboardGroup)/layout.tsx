@@ -92,7 +92,7 @@ export default function DashboardLayout({
                 My Rentals
               </Link>
 
-              <Link
+              {/* <Link
                 href="/dashboard/wishlist"
                 className={`block rounded-lg p-3 font-semibold transition ${
                   pathname === "/dashboard/wishlist"
@@ -101,7 +101,7 @@ export default function DashboardLayout({
                 }`}
               >
                 Wishlist
-              </Link>
+              </Link> */}
             </>
           )}
 

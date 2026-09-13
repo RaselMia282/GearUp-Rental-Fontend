@@ -7,10 +7,9 @@ import {
   Menu,
   X,
   User,
-  Settings,
   LogOut,
-  ShieldCheck,
   ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -90,17 +89,17 @@ export function Navbar({ user }: NavbarProps) {
             Categories
           </Link>
           <Link
-            href="/about"
+            href="/how-it-works"
             className="transition-colors hover:text-foreground"
           >
-            About
+            How it works
           </Link>
-          <Link
+          {/* <Link
             href="/contact"
             className="transition-colors hover:text-foreground"
           >
             Contact
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Right Section: Desktop Profile & Mobile Toggle */}
@@ -131,7 +130,7 @@ export function Navbar({ user }: NavbarProps) {
                   align="end"
                   className="w-56 p-2 shadow-lg rounded-xl"
                 >
-                  {/* Header Profile Info (Base UI safe wrapper) */}
+                  {/* Header Profile Info */}
                   <div className="p-2 space-y-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold leading-none">
@@ -154,42 +153,14 @@ export function Navbar({ user }: NavbarProps) {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuGroup>
+                    {/* Single Clean Dashboard Link */}
                     <DropdownMenuItem
                       onClick={() => router.push("/dashboard")}
                       className="cursor-pointer rounded-lg py-2"
                     >
-                      <User className="mr-2.5 h-4 w-4 text-muted-foreground" />
-                      <span className="font-bold">Dashboard</span>
+                      <LayoutDashboard className="mr-2.5 h-4 w-4 text-orange-600" />
+                      <span className="font-semibold">Dashboard</span>
                     </DropdownMenuItem>
-
-                    {user.role === "ADMIN" && (
-                      <DropdownMenuItem
-                        onClick={() => router.push("/dashboard")}
-                        className="cursor-pointer rounded-lg py-2"
-                      >
-                        <ShieldCheck className="mr-2.5 h-4 w-4 text-orange-500" />
-                        <span>Admin Dashboard</span>
-                      </DropdownMenuItem>
-                    )}
-
-
-                    {/* provider dashboard */}
-
-                    {user.role === "PROVIDER" && (
-                      <DropdownMenuItem
-                        onClick={() => router.push("/dashboard")}
-                        className="cursor-pointer rounded-lg py-2"
-                      >
-                        <ShieldCheck className="mr-2.5 h-4 w-4 text-orange-500" />
-                        <span>Admin Dashboard</span>
-                      </DropdownMenuItem>
-                    )}
-
-
-                    <DropdownMenuItem
-                      onClick={() => router.push("/dashboard")}
-                      className="cursor-pointer rounded-lg py-2"
-                    ></DropdownMenuItem>
                   </DropdownMenuGroup>
 
                   <DropdownMenuSeparator />
@@ -288,20 +259,17 @@ export function Navbar({ user }: NavbarProps) {
 
                 <div className="flex flex-col space-y-2 pt-2 text-sm font-medium">
                   <Link
-                    href="/profile"
+                    href="/dashboard"
                     className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    <User className="h-4 w-4" /> Profile
+                    <LayoutDashboard className="h-4 w-4 text-orange-600" /> Dashboard
                   </Link>
-                  {user.role === "ADMIN" && (
-                    <Link
-                      href="/admin"
-                      className="flex items-center gap-2 text-orange-600"
-                    >
-                      <ShieldCheck className="h-4 w-4" /> Admin Dashboard
-                    </Link>
-                  )}
-                  <button className="flex items-center gap-2 text-red-600 pt-2">
+
+                  <button
+                    onClick={handleLogOut}
+                    className="flex items-center gap-2 text-red-600 pt-2 w-full text-left"
+                  >
                     <LogOut className="h-4 w-4" /> Log out
                   </button>
                 </div>
@@ -311,13 +279,19 @@ export function Navbar({ user }: NavbarProps) {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => router.push("/login")}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push("/login");
+                  }}
                 >
                   Sign in
                 </Button>
                 <Button
                   className="w-full bg-orange-600 hover:bg-orange-700"
-                  onClick={() => router.push("/register")}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push("/register");
+                  }}
                 >
                   Sign up
                 </Button>

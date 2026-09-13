@@ -1,20 +1,129 @@
 import Link from "next/link";
-
-import { ShoppingBag, Clock, CheckCircle2, ArrowRight, Package } from "lucide-react";
+import { 
+  ShoppingBag, 
+  Clock, 
+  CheckCircle2, 
+  ArrowRight, 
+  Package, 
+  Users, 
+  PlusCircle, 
+  ShieldCheck 
+} from "lucide-react";
 import { getMyRentals } from "@/service/getMyRentals";
+import { getAuthData } from "@/service/logOut"; 
 
-export default async function UserDashboardPage() {
+export default async function DashboardPage() {
+  
+  const user = await getAuthData();
+  const role = user?.role?.toUpperCase();
+
   
   const rentals = (await getMyRentals()) || [];
 
-  // 💡 Real Data Filter & Calculation
+  // ================= ADMIN VIEW =================
+  if (role === "ADMIN") {
+    return (
+      <div className="space-y-8 p-6">
+        {/* Welcome Banner */}
+        <div className="bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-lg">
+          <h1 className="text-2xl md:text-3xl font-bold">Admin Portal ⚡</h1>
+          <p className="text-slate-300 mt-2 text-sm md:text-base">
+            Welcome back, {(user as any)?.name || (user as any)?.admin || "Admin"}. Here is your system control center.
+          </p>
+        </div>
+
+        {/* Quick Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex items-center gap-3 text-slate-800 font-semibold text-lg">
+              <Users className="w-5 h-5 text-orange-600" />
+              <span>User Management</span>
+            </div>
+            <p className="text-slate-500 text-sm">
+              Manage system users, change account status, block or unblock accounts.
+            </p>
+            <Link
+              href="/dashboard/users"
+              className="inline-flex items-center gap-2 text-orange-600 font-medium hover:text-orange-700 text-sm"
+            >
+              Manage Users <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex items-center gap-3 text-slate-800 font-semibold text-lg">
+              <Package className="w-5 h-5 text-blue-600" />
+              <span>Gear Management</span>
+            </div>
+            <p className="text-slate-500 text-sm">
+              View and oversee all gear listings uploaded across the platform.
+            </p>
+            <Link
+              href="/dashboard/all-gears"
+              className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 text-sm"
+            >
+              Browse All Gears <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ================= PROVIDER VIEW =================
+  if (role === "PROVIDER") {
+    return (
+      <div className="space-y-8 p-6">
+        <div className="bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-lg">
+          <h1 className="text-2xl md:text-3xl font-bold">Provider Dashboard 🛠️</h1>
+          <p className="text-slate-300 mt-2 text-sm md:text-base">
+            Manage your gear listings and rental requests from customers.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex items-center gap-3 text-slate-800 font-semibold text-lg">
+              <Package className="w-5 h-5 text-orange-600" />
+              <span>My Gears</span>
+            </div>
+            <p className="text-slate-500 text-sm">
+              Inspect your inventory, update gear details or check availability.
+            </p>
+            <Link
+              href="/dashboard/my-gears"
+              className="inline-flex items-center gap-2 text-orange-600 font-medium hover:text-orange-700 text-sm"
+            >
+              Manage Inventory <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex items-center gap-3 text-slate-800 font-semibold text-lg">
+              <PlusCircle className="w-5 h-5 text-emerald-600" />
+              <span>Add New Gear</span>
+            </div>
+            <p className="text-slate-500 text-sm">
+              List new equipment or products to earn from rentals.
+            </p>
+            <Link
+              href="/dashboard/my-gears/add"
+              className="inline-flex items-center gap-2 text-emerald-600 font-medium hover:text-emerald-700 text-sm"
+            >
+              Add Product <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ================= CUSTOMER / USER VIEW (DEFAULT) =================
   const totalBookings = rentals.length;
   const activeRentals = rentals.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => item.status === "APPROVED" || item.status === "PENDING"
   ).length;
   const completedRentals = rentals.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => item.status === "COMPLETED"
   ).length;
 

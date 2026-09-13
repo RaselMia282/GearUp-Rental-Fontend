@@ -1,59 +1,83 @@
+
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Trash2, Lock, Award, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { myRentals } from "@/service/myRental";
+import { createRentalsOrder } from "@/service/createRentalsOrder";
 
 export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading checkout...</div>}>
+      <CheckoutContent />
+    </Suspense>
+  );
+}
+
+function CheckoutContent() {
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const gearId = searchParams.get("gearId");
   const gearTitle = searchParams.get("title") || "Selected Gear";
   const gearPrice = Number(searchParams.get("price")) || 45;
+
   const gearImage =
-    searchParams.get("image") || "https://i.ibb.co.com/G4FQRD83/unnamed-1.jpg";
+    searchParams.get("image") ||
+    "https://i.ibb.co.com/G4FQRD83/unnamed-1.jpg";
 
   const [selectedProtection, setSelectedProtection] = useState<
     "none" | "basic" | "full"
   >("full");
 
   const rentalDays = 2;
+
   const itemPrice = gearPrice * rentalDays;
-  const protectionPrices = { none: 0, basic: 15.0, full: 45.0 };
+
+  const protectionPrices = {
+    none: 0,
+    basic: 15.0,
+    full: 45.0,
+  };
+
   const cleaningFee = 12.0;
   const taxRate = 0.08;
 
-  const currentProtectionPrice = protectionPrices[selectedProtection];
-  const subtotal = itemPrice + currentProtectionPrice + cleaningFee;
-  const tax = subtotal * taxRate;
-  const total = subtotal + tax;
+  const currentProtectionPrice =
+    protectionPrices[selectedProtection];
 
-  // dynamic id here
+  const subtotal =
+    itemPrice + currentProtectionPrice + cleaningFee;
+
+  const tax = subtotal * taxRate;
+
+  const total = subtotal + tax;
 
   const handleConfirmRental = async () => {
     setLoading(true);
 
     try {
       const payload = {
-        startDate: "2026-08-01",
-        endDate: "2026-08-05",
+        startDate: new Date("2026-08-01").toISOString(),
+        endDate: new Date("2026-08-05").toISOString(),
         gearItemId: gearId,
         quantity: 1,
       };
 
       console.log("RENTAL PAYLOAD:", payload);
 
-      const result = await myRentals(payload);
+      const result = await createRentalsOrder(payload);
 
       console.log("🔥 FRONTEND RESULT:", result);
 
       if (!result.success || !result.data?.id) {
-        throw new Error(result.message || "Rental order creation failed");
+        throw new Error(
+          result.message || "Rental order creation failed",
+        );
       }
 
       router.push(`/payment/${result.data.id}`);
@@ -70,7 +94,8 @@ export default function CheckoutPage() {
         href={gearId ? `/gears/${gearId}` : "/gears"}
         className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 mb-6 transition"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Gear Details
+        <ArrowLeft className="w-4 h-4" />
+        Back to Gear Details
       </Link>
 
       <h1 className="text-2xl sm:text-3xl font-extrabold mb-8 text-gray-900">
@@ -85,6 +110,7 @@ export default function CheckoutPage() {
             <h2 className="text-lg font-bold mb-4 text-gray-900">
               Equipment Selection
             </h2>
+
             <div className="flex flex-col sm:flex-row gap-4 items-start bg-gray-50 p-4 rounded-2xl border border-gray-100">
               <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-200">
                 <Image
@@ -94,19 +120,23 @@ export default function CheckoutPage() {
                   className="object-cover"
                 />
               </div>
+
               <div className="flex-1">
                 <div className="flex justify-between items-start">
                   <h3 className="font-bold text-gray-900 text-base">
                     {gearTitle}
                   </h3>
+
                   <button className="text-gray-400 hover:text-red-500 transition">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
+
                 <div className="flex flex-wrap items-center gap-3 mt-4">
                   <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full">
                     Aug 24 — Aug 26 ({rentalDays} Days)
                   </span>
+
                   <span className="text-xs font-extrabold text-gray-700">
                     ${gearPrice} / day
                   </span>
@@ -118,13 +148,16 @@ export default function CheckoutPage() {
           {/* Gear Protection Option */}
           <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
             <h2 className="text-lg font-bold mb-1 text-gray-900 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#ff4e00]" /> Gear Protection
+              <ShieldCheck className="w-5 h-5 text-[#ff4e00]" />
+              Gear Protection
             </h2>
+
             <p className="text-xs text-gray-500 mb-5 font-medium">
               Select protection coverage for peace of mind on your trip.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Full Protection */}
               <div
                 onClick={() => setSelectedProtection("full")}
                 className={`relative border-2 rounded-2xl p-4 cursor-pointer transition-all ${
@@ -136,24 +169,33 @@ export default function CheckoutPage() {
                 <span className="absolute -top-2.5 left-3 bg-[#ff4e00] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full">
                   Recommended
                 </span>
+
                 <div className="flex justify-between items-start mt-1">
                   <h4 className="font-bold text-gray-900 text-sm">
                     Summit Safety
                   </h4>
+
                   <input
                     type="radio"
                     checked={selectedProtection === "full"}
-                    onChange={() => setSelectedProtection("full")}
+                    onChange={() =>
+                      setSelectedProtection("full")
+                    }
                     className="accent-[#ff4e00]"
                   />
                 </div>
+
                 <p className="text-xs text-gray-500 mt-2 font-medium">
-                  Complete coverage for theft, accidental damage, and deep
-                  scratches.
+                  Complete coverage for theft, accidental damage,
+                  and deep scratches.
                 </p>
-                <p className="text-sm font-black text-gray-900 mt-4">$45.00</p>
+
+                <p className="text-sm font-black text-gray-900 mt-4">
+                  $45.00
+                </p>
               </div>
 
+              {/* Basic Protection */}
               <div
                 onClick={() => setSelectedProtection("basic")}
                 className={`border-2 rounded-2xl p-4 cursor-pointer transition-all ${
@@ -166,17 +208,24 @@ export default function CheckoutPage() {
                   <h4 className="font-bold text-gray-900 text-sm">
                     Trail Minor
                   </h4>
+
                   <input
                     type="radio"
                     checked={selectedProtection === "basic"}
-                    onChange={() => setSelectedProtection("basic")}
+                    onChange={() =>
+                      setSelectedProtection("basic")
+                    }
                     className="accent-[#ff4e00]"
                   />
                 </div>
+
                 <p className="text-xs text-gray-500 mt-2 font-medium">
                   Covers minor wear and tear and standard cleaning.
                 </p>
-                <p className="text-sm font-black text-gray-900 mt-4">$15.00</p>
+
+                <p className="text-sm font-black text-gray-900 mt-4">
+                  $15.00
+                </p>
               </div>
             </div>
           </div>
@@ -194,18 +243,23 @@ export default function CheckoutPage() {
                 <span>
                   {gearTitle} ({rentalDays} days)
                 </span>
+
                 <span className="font-bold text-gray-900">
                   ${itemPrice.toFixed(2)}
                 </span>
               </div>
+
               <div className="flex justify-between">
                 <span>Gear Protection</span>
+
                 <span className="font-bold text-gray-900">
                   ${currentProtectionPrice.toFixed(2)}
                 </span>
               </div>
+
               <div className="flex justify-between">
                 <span>Cleaning Fee</span>
+
                 <span className="font-bold text-gray-900">
                   ${cleaningFee.toFixed(2)}
                 </span>
@@ -215,12 +269,15 @@ export default function CheckoutPage() {
             <div className="space-y-3 text-sm text-gray-600 border-b border-gray-100 py-4 font-medium">
               <div className="flex justify-between">
                 <span>Subtotal</span>
+
                 <span className="font-bold text-gray-900">
                   ${subtotal.toFixed(2)}
                 </span>
               </div>
+
               <div className="flex justify-between">
                 <span>Estimated Tax (8%)</span>
+
                 <span className="font-bold text-gray-900">
                   ${tax.toFixed(2)}
                 </span>
@@ -228,7 +285,10 @@ export default function CheckoutPage() {
             </div>
 
             <div className="flex justify-between items-center py-5">
-              <span className="text-base font-bold text-gray-900">Total</span>
+              <span className="text-base font-bold text-gray-900">
+                Total
+              </span>
+
               <span className="text-2xl font-black text-[#ff4e00]">
                 ${total.toFixed(2)}
               </span>
@@ -236,12 +296,18 @@ export default function CheckoutPage() {
 
             <button
               onClick={handleConfirmRental}
-              className="w-full bg-[#ff4e00] hover:bg-[#e04500] text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 flex items-center justify-center gap-2 group"
+              disabled={loading || !gearId}
+              className="w-full bg-[#ff4e00] hover:bg-[#e04500] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-2xl transition shadow-sm mb-3 flex items-center justify-center gap-2 group"
             >
-              <span>Confirm Rental</span>
-              <span className="group-hover:translate-x-1 transition-transform">
-                →
+              <span>
+                {loading ? "Creating Rental..." : "Confirm Rental"}
               </span>
+
+              {!loading && (
+                <span className="group-hover:translate-x-1 transition-transform">
+                  →
+                </span>
+              )}
             </button>
 
             <p className="text-center text-xs text-gray-400 font-medium">

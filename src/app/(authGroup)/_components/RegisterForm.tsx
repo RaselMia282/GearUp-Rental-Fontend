@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 
 export default function RegisterPage() {
-    const [state,action,pending]= useActionState(registerActions,false)
+    const [state,action,pending]= useActionState(registerActions,null)
     useEffect(()=>{
         if(!state) return
         if(state.success){
@@ -28,7 +28,7 @@ export default function RegisterPage() {
           priority
           className="object-cover"
         /> */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-black/30" />
 
         {/* Top Logo */}
         <div className="relative z-10">

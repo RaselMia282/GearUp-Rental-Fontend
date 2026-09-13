@@ -14,12 +14,11 @@ const trendingImages: Record<string, string> = {
   "Box": "https://i.ibb.co.com/60K0vRn7/Screenshot-2026-08-22-at-11-06-52-AM.png",
 };
 
-// ImgBB ডোমেইনের ইমেজের সাহায্যে ফলব্যাক হ্যান্ডলিং
 function getGearImage(title: string, imgURL: string | null): string {
   if (imgURL) return imgURL;
   if (trendingImages[title]) return trendingImages[title];
 
-  const cleanTitle = title.toLowerCase();
+  const cleanTitle = (title || "").toLowerCase();
 
   if (cleanTitle.includes("tent") || cleanTitle.includes("camping") || cleanTitle.includes("stove")) {
     return "https://i.ibb.co.com/SXMCfTC0/Screenshot-2026-08-22-at-9-17-30-PM.png";

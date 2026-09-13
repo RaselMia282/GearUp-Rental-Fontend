@@ -8,6 +8,9 @@ type loginState = {
   success: boolean;
   statusCode: number;
   message: string;
+  error?:string;
+  
+  
   data: {
     accessToken: string;
     refreshToken: string;
@@ -15,7 +18,7 @@ type loginState = {
 };
 
 export const loginAction = async (
-  prevState: loginState,
+  prevState: loginState|null,
   formData: FormData,
 ) => {
   console.log(formData);

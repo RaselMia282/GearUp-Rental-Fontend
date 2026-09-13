@@ -109,7 +109,7 @@ export default function ProfilePage() {
         <button
           type="submit"
           disabled={updating}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700-700 disabled:opacity-50"
         >
           {updating ? "Updating..." : "Save Changes"}
         </button>

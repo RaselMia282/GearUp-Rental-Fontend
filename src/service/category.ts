@@ -2,8 +2,11 @@
 
 export async function getCategories() {
   try {
-    
-    const res = await fetch("http://localhost:8000/api/categories", {
+
+    const BASE_URL = process.env.BACKEND_API_URL || "https://sports-gear-rental-api.onrender.com";
+
+
+    const res = await fetch(`${BASE_URL}/api/categories`, {
       cache: "no-store",
     });
 

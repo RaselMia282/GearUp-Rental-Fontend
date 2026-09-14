@@ -35,7 +35,12 @@ function getGearImage(title: string, imgURL: string | null): string {
 
 export async function getGears() {
   try {
-    const res = await fetch("http://localhost:8000/api/gear", {
+    const BASE_URL = process.env.BACKEND_API_URL || 
+    
+    "https://sports-gear-rental-api.onrender.com";
+
+    
+    const res = await fetch(`${BASE_URL}/api/gear`, {
       cache: "no-store",
     });
 

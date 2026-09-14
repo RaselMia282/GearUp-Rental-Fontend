@@ -1,3 +1,7 @@
+
+// Configured remote image domains for ImgBB
+
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
